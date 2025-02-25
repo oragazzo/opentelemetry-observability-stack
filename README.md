@@ -51,7 +51,7 @@ Launch the OpenTelemetry Collector, ClickHouse, Prometheus, and Grafana:
 ```bash
 make run_otel
 # or
-docker compose up -d
+docker compose -f docker/docker-compose.yml up -d
 ```
 
 ### 2. Run the Flask Application
@@ -60,8 +60,6 @@ Start the Flask application with OpenTelemetry instrumentation:
 
 ```bash
 make run_server
-# or
-cd app && ./start_app.sh
 ```
 
 The application will be available at http://localhost:5555
@@ -141,10 +139,9 @@ To instrument your Python application with OpenTelemetry:
 
 - `make run_server`: Start the Flask application with OpenTelemetry instrumentation
 - `make run_otel`: Start the observability stack (OpenTelemetry Collector, ClickHouse, Prometheus, Grafana)
-- `make build`: Build the Docker containers
 - `make clean`: Stop and remove all containers and volumes
-- `make init-db`: Initialize the ClickHouse database
-- `make backup`: Create a backup of the ClickHouse database
+- `make backup`: Create a backup of the ClickHouse traces table to the backups disk
+- `make restore`: Restore the ClickHouse traces table from a backup file on the backups disk
 
 ## Troubleshooting
 

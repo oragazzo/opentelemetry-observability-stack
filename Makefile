@@ -14,3 +14,9 @@ run_otel:
 
 clean:
 	docker compose -f docker/docker-compose.yml down -v
+
+backup:
+	docker exec -it clickhouse clickhouse-client --query "BACKUP TABLE otel.otel_traces TO Disk('backups', 'otel_traces.zip')"
+
+restore:
+	docker exec -it clickhouse clickhouse-client --query "RESTORE TABLE otel.otel_traces FROM Disk('backups', 'otel_traces.zip')"
