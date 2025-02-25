@@ -46,6 +46,7 @@ env/
 
 # Project specific
 clickhouse/
+!docker/config/clickhouse/
 backups/
 app/users.db
 *.log

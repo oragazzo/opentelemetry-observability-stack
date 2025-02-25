@@ -92,14 +92,17 @@ The application will be available at http://localhost:5555
 │   └── users.db            # SQLite database
 ├── backups/                # ClickHouse backups directory
 ├── clickhouse/             # ClickHouse data directory
-├── backup_disk.xml         # ClickHouse backup configuration
-├── docker-compose.yml      # Docker Compose configuration
-├── grafana-datasources.yml # Grafana datasource configuration
-├── init-db.sql             # ClickHouse initialization SQL
+├── docker/                 # Docker configuration
+│   ├── config/             # Service configurations
+│   │   ├── clickhouse/     # ClickHouse configuration
+│   │   ├── grafana/        # Grafana configuration
+│   │   ├── otel/           # OpenTelemetry configuration
+│   │   └── prometheus/     # Prometheus configuration
+│   ├── docker-compose.yml  # Main Docker Compose file
+│   └── README.md           # Docker setup documentation
+├── docker-compose.yml      # Root Docker Compose wrapper
 ├── Makefile                # Convenience commands
-├── otel-collector-config.yml # OpenTelemetry Collector configuration
-├── prometheus.yml          # Prometheus configuration
-└── tempo.yml               # Tempo configuration
+└── .gitignore              # Git ignore file
 ```
 
 ## OpenTelemetry Configuration
@@ -133,6 +136,15 @@ To instrument your Python application with OpenTelemetry:
      --service_name your-service-name \
      python your_app.py
    ```
+
+## Makefile Commands
+
+- `make run_server`: Start the Flask application with OpenTelemetry instrumentation
+- `make run_otel`: Start the observability stack (OpenTelemetry Collector, ClickHouse, Prometheus, Grafana)
+- `make build`: Build the Docker containers
+- `make clean`: Stop and remove all containers and volumes
+- `make init-db`: Initialize the ClickHouse database
+- `make backup`: Create a backup of the ClickHouse database
 
 ## Troubleshooting
 
