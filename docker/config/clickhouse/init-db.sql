@@ -1,5 +1,5 @@
 --- Based on:
---- https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/clickhouseexporter#tls
+--- https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/clickhouseexporter
 
 CREATE DATABASE IF NOT EXISTS otel;
 
