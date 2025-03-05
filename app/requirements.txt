@@ -8,3 +8,4 @@ opentelemetry-sdk
 opentelemetry-semantic-conventions
 opentelemetry-util-http
 opentelemetry-instrumentation
+opentelemetry-exporter-otlp-proto-http

@@ -31,12 +31,21 @@ exporters:
 
 processors:
   batch:
-    timeout: 1s
-    send_batch_size: 1024
+    timeout: 5s
+    send_batch_size: 100000
   memory_limiter:
-    check_interval: 1s
-    limit_mib: 1000
-    spike_limit_mib: 200
+    check_interval: 2s
+    limit_mib: 1800
+    spike_limit_mib: 500
+  resourcedetection/system:
+    detectors: [ "system" ]
+    system:
+      hostname_sources: [ "os" ]
+  resource:
+    attributes:
+      - key: service.name
+        action: upsert
+        value: "serviceName"
 
 extensions:
   health_check:
@@ -48,9 +57,13 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [memory_limiter, batch]
+      processors: [ memory_limiter, resourcedetection/system, resource, batch ]
       exporters: [clickhouse]
     metrics:
       receivers: [otlp]
       processors: [batch]
       exporters: [prometheus]
+    logs:
+      receivers: [ otlp ]
+      processors: [ memory_limiter, resourcedetection/system, resource, batch ]
+      exporters: [ clickhouse ]
