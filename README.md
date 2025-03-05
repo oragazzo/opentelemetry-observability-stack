@@ -8,7 +8,7 @@ The project consists of the following components:
 
 - **Sample Flask Application**: A simple REST API with user management endpoints
 - **OpenTelemetry Collector**: Receives, processes, and exports telemetry data
-- **ClickHouse**: High-performance columnar database for storing telemetry data
+- **ClickHouse**: High-performance columnar database for storing traces and logs
 - **Prometheus**: Time series database for metrics storage and querying
 - **Grafana**: Visualization and dashboarding platform
 
@@ -77,6 +77,7 @@ The application will be available at http://localhost:5555
 - **Grafana**: http://localhost:3000 (username: admin, password: admin)
 - **Prometheus**: http://localhost:9090
 - **ClickHouse**: http://localhost:8123 (username: default, password: clickhouse)
+- **OTel Collector Health**: http://localhost:13133/healthz
 
 ## Project Structure
 
@@ -105,14 +106,27 @@ The application will be available at http://localhost:5555
 
 ## OpenTelemetry Configuration
 
-The OpenTelemetry Collector is configured to:
+The OpenTelemetry Collector is configured with the following components:
 
-1. Receive telemetry data via OTLP (HTTP and gRPC) and FluentForward protocols
-2. Process the data using batching and memory limiting
-3. Export the data to:
-   - ClickHouse for traces and logs
-   - Prometheus for metrics
-   - Debug exporter for troubleshooting
+### Receivers
+- OTLP (gRPC) on port 4317
+- OTLP (HTTP) on port 4318
+
+### Exporters
+- ClickHouse: Stores traces and logs with 12-hour TTL
+- Prometheus: Exposes metrics on port 8889
+- Debug: Detailed logging for troubleshooting
+
+### Processors
+- Batch: 5s timeout, 100k batch size
+- Memory Limiter: 1800MiB limit, 500MiB spike limit
+- Resource Detection: System information
+- Resource: Service name attribution
+
+### Extensions
+- Health Check: Available on port 13133
+- pprof: For profiling
+- zpages: For debugging
 
 ## Development
 
@@ -145,15 +159,22 @@ To instrument your Python application with OpenTelemetry:
 
 ## Troubleshooting
 
-- If you encounter issues with the OpenTelemetry Collector, check the logs:
-  ```bash
-  docker compose logs otel-collector
-  ```
+### OpenTelemetry Collector
+- Check collector health: `curl http://localhost:13133/healthz`
+- View collector logs: `docker compose logs otel-collector`
+- Access debug pages: http://localhost:13133/debug/tracez
 
-- To verify ClickHouse is receiving data:
-  ```bash
-  curl -u default:clickhouse "http://localhost:8123/ping"
-  ```
+### ClickHouse
+- Verify connection: `curl -u default:clickhouse "http://localhost:8123/ping"`
+- Check data ingestion: `curl -u default:clickhouse "http://localhost:8123/query" --data "SELECT count() FROM otel.otel_traces"`
+
+### Prometheus
+- Access metrics: http://localhost:8889/metrics
+- Check targets: http://localhost:9090/targets
+
+### Grafana
+- Verify data sources: http://localhost:3000/datasources
+- Check dashboard loading: http://localhost:3000/dashboards
 
 ## License
 
