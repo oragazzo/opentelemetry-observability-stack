@@ -1,6 +1,7 @@
 # from ddtrace import patch_all
 from flask import Flask, request, jsonify
 from database import init_db, close_db, add_user, get_user
+import time
 
 # Initialize Flask
 app = Flask(__name__)
@@ -22,6 +23,10 @@ def error():
 def hello():
     return 'Hello, World!'
 
+@app.route('/slow-endpoint')
+def slow_endpoint():
+    time.sleep(10)
+    return 'Waking up...'
 
 @app.route("/api/users/<username>", methods=['GET', 'POST', 'PUT'])
 def users(username):

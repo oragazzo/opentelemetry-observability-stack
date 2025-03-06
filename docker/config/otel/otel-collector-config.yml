@@ -41,11 +41,6 @@ processors:
     detectors: [ "system" ]
     system:
       hostname_sources: [ "os" ]
-  resource:
-    attributes:
-      - key: service.name
-        action: upsert
-        value: "serviceName"
 
 extensions:
   health_check:
@@ -57,7 +52,7 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [ memory_limiter, resourcedetection/system, resource, batch ]
+      processors: [ memory_limiter, resourcedetection/system, batch ]
       exporters: [clickhouse]
     metrics:
       receivers: [otlp]
@@ -65,5 +60,5 @@ service:
       exporters: [prometheus]
     logs:
       receivers: [ otlp ]
-      processors: [ memory_limiter, resourcedetection/system, resource, batch ]
+      processors: [ memory_limiter, resourcedetection/system, batch ]
       exporters: [ clickhouse ]
